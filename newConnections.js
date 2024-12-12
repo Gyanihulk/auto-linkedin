@@ -129,7 +129,7 @@ async function connectWithFirst15People(driver) {
                 console.log("scrolling to bottom")
                 // Scroll to the bottom to load more cards
                 await driver.executeScript("window.scrollTo(0, document.body.scrollHeight);");
-                await driver.sleep(3000); // Wait for new cards to load
+                randomDelay(); // Wait for new cards to load
             }
         }
     } catch (error) {
