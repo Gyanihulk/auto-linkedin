@@ -68,69 +68,70 @@ async function searchAndSelectPeopleCategory(driver) {
         console.error("Error during search and selection process:", error);
     }
 }
-async function connectWithFirst15People(driver) {
+let peopleConnected=0
+async function connectWithFirst10People(driver) {
     try {
-        // Wait for the list containing people cards to load
+        // Wait for the cards to load
         await driver.wait(until.elementsLocated(By.css('ul.list-style-none li')), 10000);
 
         const peopleCards = await driver.findElements(By.css('ul.list-style-none li'));
-        console.log(peopleCards, "cards");
+        console.log(`Found ${peopleCards.length} people cards.`);
 
-        // Loop through the first 15 results
-        for (let i = 0; i < Math.min(15, peopleCards.length); i++) {
+        let peopleConnected = 0;
+
+        for (let i = 0; i < peopleCards.length && peopleConnected < 10; i++) {
+            console.log(`Processing card ${i + 1}`);
             let attempts = 0;
             let connected = false;
 
             while (attempts < 3 && !connected) {
                 try {
-                    const card = peopleCards[i]; // Use the already fetched list
+                    const card = peopleCards[i];
+                    await driver.executeScript("arguments[0].scrollIntoView({block: 'center'});", card);
 
-                    const connectButton = await card.findElement(By.xpath(".//button[contains(@aria-label, 'connect')]"));
-                    await driver.wait(until.elementIsVisible(connectButton), 5000);
-                    await driver.wait(until.elementIsEnabled(connectButton), 5000);
+                    const connectButton = await card.findElement(By.xpath(".//button[.//span[text()='Connect']]"));
+                    console.log(`Connect button found for card ${i + 1}`);
 
-                    await connectButton.click();
+                    await driver.executeScript("arguments[0].click();", connectButton);
+                    console.log(`Clicked connect button on card ${i + 1}`);
 
-                    const sendNowButton = await driver.wait(until.elementLocated(By.xpath("//button[@aria-label='Send now']")), 10000);
-                    await driver.wait(until.elementIsVisible(sendNowButton), 5000);
-                    await driver.wait(until.elementIsEnabled(sendNowButton), 5000);
+                    const sendButton = await driver.wait(until.elementLocated(By.xpath("//button[.//span[text()='Send']]")), 10000);
+                    await driver.wait(until.elementIsVisible(sendButton), 5000);
+                    await driver.wait(until.elementIsEnabled(sendButton), 5000);
 
-                    await sendNowButton.click();
+                    await sendButton.click();
+                    console.log(`Clicked send button for card ${i + 1}`);
 
-                    connected = true; // Mark as connected successfully
-
-                    // Optional: wait for dialog to close before the next iteration
+                    connected = true;
+                    peopleConnected++;
+                    console.log(`Successfully connected with card ${i + 1} (${peopleConnected}/10)`);
                     await driver.sleep(2000);
-
                 } catch (error) {
-                    if (error.name === 'StaleElementReferenceError') {
-                        console.warn("StaleElementReferenceError: Retrying...");
+                    if (error.name === 'ElementClickInterceptedError') {
+                        console.warn(`ElementClickInterceptedError: Retrying card ${i + 1}`);
+                    } else if (error.name === 'StaleElementReferenceError') {
+                        console.warn(`StaleElementReferenceError: Retrying card ${i + 1}`);
                     } else {
-                        console.error("Error sending connection invitation:", error);
-                        break; // Break if error is not resolvable by retrying
+                        console.error(`Error sending connection invitation for card ${i + 1}:`, error);
+                        break;  // Exit attempts for this card.
                     }
                     attempts++;
                 }
-
-                // Wait between retries
-                await driver.sleep(1000);
+                await driver.sleep(1000);  // Wait between retries
             }
-
-            // Wait between actions to simulate human behavior
-            await driver.sleep(3000);
+            await driver.sleep(3000);  // Pause between user interactions
         }
     } catch (error) {
         console.error("Error while connecting with people:", error);
     }
 }
-
 async function performTask() {
     const driver = await initializeDriver();
     try {
         await openLinkedIn(driver);
         await performLogin(driver);
         await searchAndSelectPeopleCategory(driver);
-        await connectWithFirst15People(driver);
+        await connectWithFirst10People(driver);
     } catch (error) {
         console.error("Error during monitoring process:", error);
 
