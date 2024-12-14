@@ -93,36 +93,34 @@ async function extractConnections(driver) {
     // Read existing connections from the JSON file
     let savedConnections = [];
     if (fs.existsSync('connections.json')) {
-        savedConnections = JSON.parse(fs.readFileSync('connections.json'));
+        savedConnections = JSON.parse(fs.readFileSync('connections.json', 'utf-8'));
     }
 
-    const connections = [];
     for (let card of connectionCards) {
         try {
-            let name = await card.findElement(By.className('mn-connection-card__name')).getText();
-            let connectionTime = await card.findElement(By.tagName('time')).getText();
+            const nameElement = await card.findElement(By.className('mn-connection-card__name'));
+            const name = await nameElement.getText();
+            const connectionTime = await card.findElement(By.tagName('time')).getText();
+            
             if (isConnectedWithin24Hours(connectionTime) && !hasMessageBeenSent(name, savedConnections)) {
-                let messageSent = await sendMessage(driver, card);
-                connections.push({
+                const messageSent = await sendMessage(driver, card);
+                const connection = {
                     name: name.trim(),
                     connectedTime: connectionTime.trim(),
                     messageSent: messageSent
-                });
-                console.log(`Connection fetched: ${name}, ${connectionTime}. Message sent: ${messageSent}`);
+                };
+                
+                // Update local array and save to JSON after each card is processed
+                savedConnections.push(connection);
+                fs.writeFileSync('connections.json', JSON.stringify(savedConnections, null, 2));
+                console.log(`Connection processed and saved: ${name}. Message sent: ${messageSent}`);
             } else {
-                connections.push({
-                    name: name.trim(),
-                    connectedTime: connectionTime.trim(),
-                    messageSent: true  // Assume true for those who do not need a message sent
-                });
-                console.log(`Connection not processed: ${name}, ${connectionTime}`);
+                console.log(`Connection skipped: ${name}, ${connectionTime}`);
             }
         } catch (error) {
             console.error("Error extracting connection:", error);
         }
     }
-
-    return connections;
 }
 
 async function sendMessage(driver, card) {
