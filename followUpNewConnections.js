@@ -64,13 +64,17 @@ async function loadCookies(driver) {
     }
 }
 
-function isConnectedWithin24Hours(connectionTime) {
-    const timeRegex = /(\d+)\s(hours?)\sago/;
-    const match = connectionTime.match(timeRegex);
-    if (match && parseInt(match[1]) <= 24) {
-        return true;
+function isConnectedWithin24Hours(connectionTime) { 
+    const timeRegex = /(\d+)\s(minutes?|hours?)\sago/; 
+    const match = connectionTime.match(timeRegex); 
+    if (match) {
+        const value = parseInt(match[1]);
+        const unit = match[2];
+        if ((unit.startsWith('hour') && value <= 24) || unit.startsWith('minute')) {
+            return true;
+        }
     }
-    return false;
+    return false; 
 }
 
 function hasMessageBeenSent(name, savedConnections) {
@@ -137,7 +141,18 @@ async function sendMessage(driver, card) {
         const name = await nameElement.getText();
 
         // Send a customized message
-        const customMessage = `Hey ${name.trim()}, great to connect with you!`;
+        const customMessage = `
+Hey ${name.trim()}, great to connect with you!
+
+I'm Adamya Kumar, and I'm excited to share more about what I do. I run a software development agency focused on delivering scalable, high-performance backend solutions and top-notch UI/UX for mobile apps and websites. Our goal is to support innovative entrepreneurs by providing cost-effective solutions without compromising on quality.
+
+Beyond development, I'm also a mentor helping entrepreneurs bring their products to market successfully. You can check out my portfolio here: [My Portfolio](https://lms-platform-xi-ebon.vercel.app/).
+
+Feel free to take a look at my profile to learn more about my journey and expertise. Looking forward to exploring potential collaborations!
+
+Best,
+Adamya Kumar
+`;
         await messageBox.sendKeys(customMessage);
 
         await randomDelay();
