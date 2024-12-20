@@ -408,5 +408,65 @@
     "name": "Soumya Patra",
     "connectedTime": "Connected 22 hours ago",
     "messageSent": true
+  },
+  {
+    "name": "CA Laxmi Jain",
+    "connectedTime": "Connected 2 hours ago",
+    "messageSent": true
+  },
+  {
+    "name": "Simar Preet",
+    "connectedTime": "Connected 2 hours ago",
+    "messageSent": true
+  },
+  {
+    "name": "Himani Uniyal",
+    "connectedTime": "Connected 4 hours ago",
+    "messageSent": true
+  },
+  {
+    "name": "Ishwarya Annamalai",
+    "connectedTime": "Connected 22 minutes ago",
+    "messageSent": true
+  },
+  {
+    "name": "Niranjani Shanmugam",
+    "connectedTime": "Connected 2 hours ago",
+    "messageSent": false
+  },
+  {
+    "name": "Ananya Anjali",
+    "connectedTime": "Connected 10 hours ago",
+    "messageSent": false
+  },
+  {
+    "name": "Alyssa Cheng",
+    "connectedTime": "Connected 11 hours ago",
+    "messageSent": false
+  },
+  {
+    "name": "Ishaan Makkar",
+    "connectedTime": "Connected 11 hours ago",
+    "messageSent": false
+  },
+  {
+    "name": "Niranjani Shanmugam",
+    "connectedTime": "Connected 2 hours ago",
+    "messageSent": true
+  },
+  {
+    "name": "Ananya Anjali",
+    "connectedTime": "Connected 10 hours ago",
+    "messageSent": true
+  },
+  {
+    "name": "Alyssa Cheng",
+    "connectedTime": "Connected 11 hours ago",
+    "messageSent": true
+  },
+  {
+    "name": "Ishaan Makkar",
+    "connectedTime": "Connected 11 hours ago",
+    "messageSent": true
   }
 ]
